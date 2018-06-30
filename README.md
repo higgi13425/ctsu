@@ -1,5 +1,5 @@
 # ctsu
-This shiny app allows the upload of a task_report.xlsx file and a protcol_summary.xlsx file, 
+This shiny app allows the upload of a task_report.xlsx file and a protocol_summary.xlsx file, 
 and subsequent reproducible data wrangling to produce a downloadable summary report in xlsx format for each CTSU.
 
 Future goals include 
