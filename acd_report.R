@@ -127,7 +127,7 @@ pstr <- pstr %>%
     `Open to Accrual`
   )
 
-#merge ps and tr_na_spreqd, put names in order
+#merge ps and tr_na_spread, put names in order
 pstr_na <- left_join(ps, tr_na_spread, by = "protocol_no")
 pstr_na <- pstr_na %>%
   arrange(`UFA Completed`) %>%

@@ -37,7 +37,7 @@ ui <- fluidPage(
 server <- function(input, output) {
   
   output$summary <- renderText({
-    readLines("summary.txt")
+    readLines("Click the download button to download your file.")
   })
   
   getData <- reactive({

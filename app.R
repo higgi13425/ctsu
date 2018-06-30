@@ -117,8 +117,97 @@ server <- function(input, output) {
     
     file1 <- read_excel(input$file1$datapath, skip = 3)
     file2 <- read_excel(input$file2$datapath, skip = 2)
-    # process code to get to file 3
-    file3 <- left_join(file1, file2, by = c("Protocol No" = "Protocol No."))
+    # data wrangling code to get to file 3
+    
+    # read in task report, clean names and select
+    tr <-
+      file1 %>%
+      clean_names() %>%
+      select(
+        task_list,
+        task_name,
+        na,
+        owner_type,
+        owner_name,
+        target_date,
+        days_overdue,
+        completed_date,
+        protocol_no,
+        institution,
+        mgmt_group
+      )
+    
+    # clean names and select columns for protocol search
+    ps <- clean_names(file2) %>%
+      select(protocol_no:additional_sponsor)
+    
+    # clean up who is owner
+    tr_owner <- tr %>% select(protocol_no, owner_name, task_name) %>%
+      filter(task_name == 'Created CTRF & \"Notify ORSP\"') %>%
+      select(-task_name)
+    
+    # add owner to ps
+    ps <- left_join(ps, tr_owner)
+    
+    # fix dates for tasks that are not applicable to study
+    # give them an artificial date in year 2200
+    tr$completed_date[tr$na == "Y"] <- as.Date("2200-01-01")
+    
+    #select for only Pre-Award tasks
+    tr <- tr %>%
+      filter(str_detect(task_list, "Pre-"))
+    
+    # now make columns = tasks
+    # using spread
+    tr_spread <- tr %>%
+      select(protocol_no, task_name, completed_date) %>%
+      filter(!is.na(completed_date)) %>%
+      unique() %>%
+      spread(task_name, completed_date)
+    
+    # fix one colname
+    colnames(tr_spread)[6] <- "Created CTRF & Notified ORSP"
+    
+    #merge ps and tr, put names in order
+    pstr <- left_join(ps, tr_spread, by = "protocol_no")
+    pstr <- pstr %>%
+      arrange(`UFA Completed`) %>%
+      mutate_if(is.POSIXct, as.Date) %>%
+      mutate_if(is.Date, funs(format(., format = "%m/%d/%Y"))) %>% 
+      select(
+        protocol_no,
+        additional_protocol_numbers,
+        department,
+        pi_name,
+        principal_sponsor,
+        current_status,
+        current_status_date,
+        owner_name,
+        title,
+        `Intake Form Completed`,
+        `UFA Completed`,
+        `Sponsor Reach out`,
+        `Feasibility w/Documents received`,
+        `Feasibility approved/CRAO Notified`,
+        `Planning Meeting Request Sent`,
+        `Planning Meeting Completed`,
+        `Created CTRF & Notified ORSP`,
+        `Billing Calendar Received`,
+        `Care Designations completed`,
+        `Internal Budget Finished`,
+        `PI approved Budget`,
+        `Budget Negotiations`,
+        `Final Budget`,
+        `PAF routed`,
+        `IRB Application Submitted`,
+        `OnCore Budget Build`,
+        `Calendar Released`,
+        `PAN Released`,
+        `Open to Accrual`
+      )
+    
+    file3 <- pstr
+    
     file3 # return
   })
   
