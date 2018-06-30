@@ -1,0 +1,12 @@
+name: ctsu
+title: ctsu
+username:
+account: pdrhiggins
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 370923
+bundleId: 1458736
+url: https://pdrhiggins.shinyapps.io/ctsu/
+when: 1530402099.99766
+asMultiple: FALSE
+asStatic: FALSE
