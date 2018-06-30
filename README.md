@@ -4,7 +4,7 @@ and subsequent reproducible data wrangling to produce a downloadable summary rep
 
 Future goals include 
 - customizing name of output file with the name of the CTSU
-- currently only have pre-award reports, future goal is
+- currently only produces pre-award reports, future goal is
 - 3 different reports (filter by rows) for 
   - pre-award
   - post-award
