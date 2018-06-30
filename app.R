@@ -45,7 +45,7 @@ ui <- fluidPage(
                     "HVB" = "hbv",
                     "BFP" = "bfp",
                     "ACCST" = "accst",
-                    "PED" = "ped",
+                    "CHILDREN" = "ped",
                     "NSS" = "nss",
                     "ONC" = "onc")),
       tableOutput("data"),
