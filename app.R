@@ -117,6 +117,7 @@ server <- function(input, output) {
     
     file1 <- read_excel(input$file1$datapath, skip = 3)
     file2 <- read_excel(input$file2$datapath, skip = 2)
+    
     # data wrangling code to get to file 3
     
     # read in task report, clean names and select
@@ -149,16 +150,18 @@ server <- function(input, output) {
     # add owner to ps
     ps <- left_join(ps, tr_owner)
     
-    # fix dates for tasks that are not applicable to study
-    # give them an artificial date in year 2200
+    # fix dates for tasks that are not applicable to or
+    # not required for this particular study
+    # give them an artificial date in the year 2200
+    # so that they are recognizable
     tr$completed_date[tr$na == "Y"] <- as.Date("2200-01-01")
     
-    #select for only Pre-Award tasks
+    # select for only Pre-Award tasks
     tr <- tr %>%
       filter(str_detect(task_list, "Pre-"))
     
     # now make columns = tasks
-    # using spread
+    # using spread from tidyr
     tr_spread <- tr %>%
       select(protocol_no, task_name, completed_date) %>%
       filter(!is.na(completed_date)) %>%
@@ -208,7 +211,7 @@ server <- function(input, output) {
     
     file3 <- pstr
     
-    file3 # return
+    file3 # returns file3
   })
   
   output$file3 <- renderTable({
