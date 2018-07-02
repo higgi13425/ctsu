@@ -41,24 +41,22 @@ ui <- fluidPage(
       
       # Input select CTSU
       selectInput("ctsu", "CTSU:",
-                  c("ACD" = "acd",
-                    "HVB" = "hbv",
-                    "BFP" = "bfp",
-                    "ACCST" = "accst",
-                    "CHILDREN" = "ped",
-                    "NSS" = "nss",
-                    "ONC" = "onc")),
-      tableOutput("data"),
+                  c("ACD" = "ACD",
+                    "HVB" = "HVB",
+                    "BFP" = "BFP",
+                    "ACCST" = "ACCST",
+                    "CHILDREN" = "PED",
+                    "NSS" = "NSS",
+                    "ONC" = "ONC")),
       
       # Horizontal line ----
       tags$hr(), 
       
       # Input select Report Type
       selectInput("report_type", "Report:",
-                  c("Pre-Award" = "pre",
-                    "Post-Award" = "post",
-                    "Amendments" = "amend")),
-      tableOutput("data2"),
+                  c("Pre-Award" = "Pre-",
+                    "Post-Award" = "Post-",
+                    "Amendments" = "Amend")),
 
       # Horizontal line ----
       tags$hr(),
@@ -92,7 +90,11 @@ ui <- fluidPage(
     
     # Main panel for displaying outputs ----
     mainPanel(
-      
+      helpText("When five rows of data appear below, 
+               your processed file will be ready for download. 
+               When the processed file is ready, a download button will appear
+               at the bottom of the sidebar. 
+               Click on the download button to download the complete file."),
       # Output: Data file ----
       tableOutput("file3") # not actually showing file 3
       # would like to show first 5 lines of protocol no, PI, title
@@ -157,8 +159,9 @@ server <- function(input, output) {
     tr$completed_date[tr$na == "Y"] <- as.Date("2200-01-01")
     
     # select for only Pre-Award tasks
+    select_string <- input$report_type
     tr <- tr %>%
-      filter(str_detect(task_list, "Pre-"))
+      filter(str_detect(task_list, select_string))
     
     # now make columns = tasks
     # using spread from tidyr
@@ -228,7 +231,7 @@ server <- function(input, output) {
   
   output$downloadData <- downloadHandler(
     filename = function() {
-      paste("Weekly_", input$data, "_CTSU_Report_Current", ".xlsx", sep="")
+      paste(input$report_type, "Award_", input$ctsu, "_CTSU_Report_Current", ".xlsx", sep="")
     },
     content = function(file) {
       write_xlsx(outputData(), file)
